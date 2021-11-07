@@ -40,7 +40,7 @@ function edit_profile(){
         if(in_array('', $arr)){
             return 'Something went wrong, try again later or write to us: volonteriaNk@gmail.com';
         }else{
-            return '1';
+            return 'Edited';
         }
     }
 }
