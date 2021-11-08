@@ -30,36 +30,36 @@ class VolonteriaEvent
         });
     }
     function vol_post($event){
-        // $data = $wpdb->get_results("SELECT post_id, meta_key, meta_value FROM $wpdb->postmeta 
-        // WHERE (meta_key = 'event_name' OR meta_key = 'event_description' 
-        // OR meta_key = 'event_vol' OR meta_key = 'event_place' 
-        // OR meta_key = 'event_time' OR meta_key = 'telegram_id' 
-        // OR meta_key = 'event_target' OR meta_key = 'event_requirements' 
-        // OR meta_key = 'event_timetable') AND post_id = $id");
-        global $wpdb;
         $id = $_POST['event_id'];
-        $data = [];
-        $name = $wpdb->get_results("SELECT * FROM $wpdb->postmeta WHERE meta_key = 'event_name' AND post_id = $id")[0];
-        $desc = $wpdb->get_results("SELECT * FROM $wpdb->postmeta WHERE meta_key = 'event_description' AND post_id = $id")[0];
-        $vol = $wpdb->get_results("SELECT * FROM $wpdb->postmeta WHERE meta_key = 'event_vol' AND post_id = $id")[0];
-        $place = $wpdb->get_results("SELECT * FROM $wpdb->postmeta WHERE meta_key = 'event_place' AND post_id = $id")[0];
-        $time = $wpdb->get_results("SELECT * FROM $wpdb->postmeta WHERE meta_key = 'event_time' AND post_id = $id")[0];
-        $tg_id = $wpdb->get_results("SELECT * FROM $wpdb->postmeta WHERE meta_key = 'telegram_id' AND post_id = $id")[0];
-        $target = $wpdb->get_results("SELECT * FROM $wpdb->postmeta WHERE meta_key = 'event_target' AND post_id = $id")[0];
-        $req = $wpdb->get_results("SELECT * FROM $wpdb->postmeta WHERE meta_key = 'event_requirements' AND post_id = $id")[0];
-        $timetable = $wpdb->get_results("SELECT * FROM $wpdb->postmeta WHERE meta_key = 'event_timetable' AND post_id = $id")[0];
-        array_push($data, [
-            $name->meta_key => $name->meta_value,
-            $desc->meta_key => $desc->meta_value,
-            $vol->meta_key =>$vol->meta_value,
-            $place->meta_key =>$palce->meta_value,
-            $time->meta_key =>$time->meta_value,
-            $tg_id->meta_key =>$tg_id->meta_value,
-            $target->meta_key =>$target->meta_value,
-            $req->meta_key =>$req->meta_value,
-            $timetable->meta_key => $timetable->meta_value,
-        ]);
-        return $data;
+        global $wpdb;
+        $data = $wpdb->get_results("SELECT meta_key, meta_value FROM $wpdb->postmeta 
+        WHERE (meta_key = 'event_name' OR meta_key = 'event_description' 
+        OR meta_key = 'event_vol' OR meta_key = 'event_place' 
+        OR meta_key = 'event_time' OR meta_key = 'telegram_id' 
+        OR meta_key = 'event_target' OR meta_key = 'event_requirements' 
+        OR meta_key = 'event_timetable') AND post_id = $id");
+        $name = $data[0];
+        $desc = $data[1];
+        $vol = $data[2];
+        $place = $data[3];
+        $time = $data[4];
+        $telegram_id = $data[5];
+        $event_target = $data[6];
+        $req = $data[7];
+        $timetable = $data[8];
+
+        $res = [
+            $name->meta_key=>$name->meta_value,
+            $desc->meta_key=>$desc->meta_value,
+            $vol->meta_key=>$vol->meta_value,
+            $place->meta_key=>$place->meta_value,
+            $time->meta_key=>$time->meta_value,
+            $telegram_id->meta_key=>$telegram_id->meta_value,
+            $event_target->meta_key=>$event_target->meta_value,
+            $req->meta_key=>$req->meta_value,
+            $timetable->meta_key=>$timetable->meta_value,
+        ];
+        return $res;
     }
     function vol_posts(){ 
         global $wpdb;
