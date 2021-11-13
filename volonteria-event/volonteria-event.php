@@ -42,7 +42,6 @@ function vol_post(){
     $event_target = $data[6];
     $req = $data[7];
     $timetable = $data[8];
-
     $res = [
         $name->meta_key=>$name->meta_value,
         $desc->meta_key=>$desc->meta_value,
@@ -53,8 +52,9 @@ function vol_post(){
         $event_target->meta_key=>$event_target->meta_value,
         $req->meta_key=>$req->meta_value,
         $timetable->meta_key=>$timetable->meta_value,
+        'event_id'=>$id,
     ];
-    return $res;
+    return [$res];
 }
 
 function vol_posts(){ 
