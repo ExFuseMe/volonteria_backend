@@ -72,7 +72,7 @@ function vol_prereg_event()
             $vol_regged = count($wpdb->get_col("SELECT users_id FROM reg_events WHERE event_id = $id"));
             $vol_need = intval($wpdb->get_results("SELECT meta_value FROM $wpdb->postmeta WHERE post_id = $id AND meta_key = 'event_vol'")[0]->meta_value);
             if ($vol_regged < $vol_need){
-                if($current_time < $event_time){
+                if($current_time <= $event_time){
                     if(in_array($user_id, $us_ids)){
                         $res = 'U have been registrated on this event yet';
                     }else{
