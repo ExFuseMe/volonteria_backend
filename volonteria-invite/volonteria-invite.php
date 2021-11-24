@@ -41,7 +41,12 @@ function vol_reg_event()
             $points = intval($wpdb->get_results("SELECT meta_value FROM $wpdb->postmeta WHERE post_id = $id and meta_key = 'hours_points'")[0]->meta_value);
             $hours = intval($wpdb->get_results("SELECT meta_value FROM wp_usermeta WHERE meta_key = 'mycred_hours' AND user_id = $user_id")[0]->meta_value);
             $hours = strval($hours + $points);
-            $res = $wpdb->update('wp_usermeta', ['meta_value'=>$hours], ['meta_key'=>'mycred_hours','user_id' => $user_id]);
+            if($res == 1){
+                $res = $wpdb->update('wp_usermeta', ['meta_value'=>$hours], ['meta_key'=>'mycred_hours','user_id' => $user_id]);
+            }else{
+                $last_id = intval($wpdb->get_results("SELECT umeta_id FROM wp_usermeta ORDER BY umeta_id DESC")[0]->umeta_id)+1;
+                $res = $wpdb->insert('wp_usermeta', ['meta_value'=>$hours, 'meta_key'=>'mycred_hours','user_id' => $user_id,'umeta_id'=>$last_id]);
+            }
             // add points
             $balance = intval($wpdb->get_results("SELECT meta_value FROM wp_usermeta WHERE meta_key = 'mycred_default' AND user_id = $user_id")[0]->meta_value);
             $balance += 10;
