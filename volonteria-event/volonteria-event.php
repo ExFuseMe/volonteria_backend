@@ -25,8 +25,8 @@ add_action('rest_api_init', function(){
 });
 
 function vol_post(){
-    $id = $_POST['event_id'];
     global $wpdb;
+    $id = $_POST['event_id'];
     $data = $wpdb->get_results("SELECT meta_key, meta_value FROM $wpdb->postmeta 
     WHERE (meta_key = 'event_name' OR meta_key = 'event_description' 
     OR meta_key = 'event_vol' OR meta_key = 'event_place' 
@@ -59,7 +59,6 @@ function vol_post(){
 
 function vol_posts(){ 
     global $wpdb;
-    //  or SELECT  WHERE (meta_key = 'event_name' OR meta_key = 'event_description')
     $post_ids = $wpdb->get_results("SELECT post_id FROM $wpdb->postmeta WHERE meta_key = 'event_name'");
     function convertor_for_dump($data)
     {

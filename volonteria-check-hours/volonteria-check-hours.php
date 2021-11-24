@@ -22,7 +22,10 @@ function vol_check_hours()
     if(isset($_POST) && $_POST['user_id']!=''){
         $id = $_POST["user_id"];
         $data = $wpdb->get_results("SELECT meta_key, meta_value FROM $wpdb->usermeta WHERE meta_key = 'mycred_hours' AND user_id = $id");
-        $res = ['user_id'=>$id,$data[0]->meta_key=>$data[0]->meta_value];
+        $res = [
+            'user_id'=>$id,
+            $data[0]->meta_key=>$data[0]->meta_value
+        ];
         return $res;
     }
     
