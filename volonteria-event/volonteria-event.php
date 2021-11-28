@@ -64,17 +64,24 @@ function vol_posts(){
     {
         global $wpdb;
         $event = [];
+        $current_time = strtotime(current_time('Y/m/d'));
         foreach($data as $i){
             $name = $wpdb->get_results("SELECT meta_value FROM $wpdb->postmeta WHERE post_id = $i->post_id and meta_key = 'event_name'")[0]->meta_value;
             $time = $wpdb->get_results("SELECT meta_value FROM $wpdb->postmeta WHERE post_id = $i->post_id and meta_key = 'event_time'")[0]->meta_value;
+            $time2 = strtotime($time);
             $place = $wpdb->get_results("SELECT meta_value FROM $wpdb->postmeta WHERE post_id = $i->post_id and meta_key = 'event_place'")[0]->meta_value;
             $status = $wpdb->get_results("SELECT meta_value FROM $wpdb->postmeta WHERE post_id = $i->post_id and meta_key = 'status'")[0]->meta_value;
-            if($status=="Открыто для регистрации"){
+
+            if($status=="Открыто для регистрации" && $time2>= $current_time){
                 $arr = ['post_id'=>$i->post_id, 
                 'name_value'=>$name, 
                 'time_value'=>$time, 
                 'place_value'=>$place];
                 array_push($event, $arr);
+            }elseif($status=="Открыто для регистрации" && $time2< $current_time){
+                $res = $wpdb->update('wp_postmeta', 
+                ['meta_value'=>'Неактивно'], 
+                ['meta_key'=>'status', 'post_id'=> $i->post_id]);
             }
         }
         return wp_send_json($event);
