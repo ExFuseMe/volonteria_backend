@@ -38,25 +38,39 @@ function vol_reg_event()
         }else{
             $delete = $wpdb->delete('reg_events',['users_id'=>$user_id, 'event_id'=>$id]);
             // add hours
-            $points = intval($wpdb->get_results("SELECT meta_value FROM $wpdb->postmeta WHERE post_id = $id and meta_key = 'hours_points'")[0]->meta_value);
+            $points = intval($wpdb->get_results("SELECT meta_value FROM $wpdb->postmeta WHERE 
+            post_id = $id 
+            AND meta_key = 'hours_points'")[0]->meta_value);
             $hours = intval($wpdb->get_results("SELECT meta_value FROM wp_usermeta WHERE meta_key = 'mycred_hours' AND user_id = $user_id")[0]->meta_value);
             $hours = strval($hours + $points);
-            $res = $wpdb->update('wp_usermeta', ['meta_value'=>$hours], ['meta_key'=>'mycred_hours','user_id' => $user_id]);
+            $res = $wpdb->update('wp_usermeta', ['meta_value'=>$hours], ['meta_key'=>'mycred_hours',
+            'user_id' => $user_id]);
             if($res == 1){
-                $res = $wpdb->update('wp_usermeta', ['meta_value'=>$hours], ['meta_key'=>'mycred_hours','user_id' => $user_id]);
+                $res = $wpdb->update('wp_usermeta', ['meta_value'=>$hours], ['meta_key'=>'mycred_hours',
+                'user_id' => $user_id]);
             }else{
                 $last_id = intval($wpdb->get_results("SELECT umeta_id FROM wp_usermeta ORDER BY umeta_id DESC")[0]->umeta_id)+1;
-                $res = $wpdb->insert('wp_usermeta', ['meta_value'=>$hours, 'meta_key'=>'mycred_hours','user_id' => $user_id,'umeta_id'=>$last_id]);
+                $res = $wpdb->insert('wp_usermeta', ['meta_value'=>$hours, 
+                'meta_key'=>'mycred_hours',
+                'user_id' => $user_id,
+                'umeta_id'=>$last_id]);
             }
             // add points
-            $balance = intval($wpdb->get_results("SELECT meta_value FROM wp_usermeta WHERE meta_key = 'mycred_default' AND user_id = $user_id")[0]->meta_value);
+            $balance = intval($wpdb->get_results("SELECT meta_value FROM wp_usermeta WHERE 
+            meta_key = 'mycred_default' 
+            AND user_id = $user_id")[0]->meta_value);
             $balance += 10;
-            $res2 = $wpdb->update('wp_usermeta', ['meta_value'=>$balance], ['meta_key'=>'mycred_default','user_id' => $user_id]);
+            $res2 = $wpdb->update('wp_usermeta', ['meta_value'=>$balance], ['meta_key'=>'mycred_default',
+            'user_id' => $user_id]);
             // add to history
             $name = $wpdb->get_results("SELECT meta_value FROM $wpdb->postmeta WHERE post_id = $id and meta_key = 'event_name'")[0]->meta_value;
             $date = $wpdb->get_results("SELECT meta_value FROM $wpdb->postmeta WHERE post_id=$id and meta_key = 'event_time'")[0]->meta_value;
             $timetable = $wpdb->get_results("SELECT meta_value FROM $wpdb->postmeta WHERE post_id=$id and meta_key = 'event_timetable'")[0]->meta_value;
-            $res3 = $wpdb->insert('cur_events', ['event_id' => $id, 'users_id' => $user_id, 'event_name' => $name, 'event_time' => $date,'event_table' => $timetable]);
+            $res3 = $wpdb->insert('cur_events', ['event_id' => $id, 
+            'users_id' => $user_id, 
+            'event_name' => $name, 
+            'event_time' => $date,
+            'event_table' => $timetable]);
             return 'added';
         }
     }
