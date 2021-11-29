@@ -23,7 +23,11 @@ add_action('rest_api_init', function(){
         'callback' => 'vol_post',
     ]);
 });
-
+add_action('rest_api_init', function(){
+    register_rest_route('vl/admin', 'posts', 
+    ['methods'=>'GET', 
+    'callback'=>'admin_posts']);
+});
 function vol_post(){
     global $wpdb;
     $id = $_POST['event_id'];
@@ -65,14 +69,46 @@ function vol_posts(){
         global $wpdb;
         $event = [];
         $current_time = strtotime(current_time('Y/m/d'));
+        var_dump($current_time);
         foreach($data as $i){
             $name = $wpdb->get_results("SELECT meta_value FROM $wpdb->postmeta WHERE post_id = $i->post_id and meta_key = 'event_name'")[0]->meta_value;
             $time = $wpdb->get_results("SELECT meta_value FROM $wpdb->postmeta WHERE post_id = $i->post_id and meta_key = 'event_time'")[0]->meta_value;
             $time2 = strtotime($time);
             $place = $wpdb->get_results("SELECT meta_value FROM $wpdb->postmeta WHERE post_id = $i->post_id and meta_key = 'event_place'")[0]->meta_value;
             $status = $wpdb->get_results("SELECT meta_value FROM $wpdb->postmeta WHERE post_id = $i->post_id and meta_key = 'status'")[0]->meta_value;
-
+            var_dump($time2);
             if($status=="Открыто для регистрации" && $time2>= $current_time){
+                $arr = ['post_id'=>$i->post_id, 
+                'name_value'=>$name, 
+                'time_value'=>$time, 
+                'place_value'=>$place];
+                array_push($event, $arr);
+            }elseif($status=="Открыто для регистрации" && $time2< $current_time){
+                $res = $wpdb->update('wp_postmeta', 
+                ['meta_value'=>'Неактивно'], 
+                ['meta_key'=>'status', 'post_id'=> $i->post_id]);
+            }
+        }
+        return wp_send_json($event);
+    }
+    // convertor_for_dump
+    return convertor_for_dump($post_ids);
+}
+function admin_posts(){ 
+    global $wpdb;
+    $post_ids = $wpdb->get_results("SELECT post_id FROM $wpdb->postmeta WHERE meta_key = 'event_name'");
+    function convertor_for_dump($data)
+    {
+        global $wpdb;
+        $event = [];
+        $current_time = strtotime(current_time('Y/m/d'));
+        foreach($data as $i){
+            $name = $wpdb->get_results("SELECT meta_value FROM $wpdb->postmeta WHERE post_id = $i->post_id and meta_key = 'event_name'")[0]->meta_value;
+            $time = $wpdb->get_results("SELECT meta_value FROM $wpdb->postmeta WHERE post_id = $i->post_id and meta_key = 'event_time'")[0]->meta_value;
+            $time2 = strtotime($time);
+            $place = $wpdb->get_results("SELECT meta_value FROM $wpdb->postmeta WHERE post_id = $i->post_id and meta_key = 'event_place'")[0]->meta_value;
+            $status = $wpdb->get_results("SELECT meta_value FROM $wpdb->postmeta WHERE post_id = $i->post_id and meta_key = 'status'")[0]->meta_value;
+            if($time2>= $current_time-86400){
                 $arr = ['post_id'=>$i->post_id, 
                 'name_value'=>$name, 
                 'time_value'=>$time, 
