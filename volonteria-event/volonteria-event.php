@@ -69,14 +69,12 @@ function vol_posts(){
         global $wpdb;
         $event = [];
         $current_time = strtotime(current_time('Y/m/d'));
-        var_dump($current_time);
         foreach($data as $i){
             $name = $wpdb->get_results("SELECT meta_value FROM $wpdb->postmeta WHERE post_id = $i->post_id and meta_key = 'event_name'")[0]->meta_value;
             $time = $wpdb->get_results("SELECT meta_value FROM $wpdb->postmeta WHERE post_id = $i->post_id and meta_key = 'event_time'")[0]->meta_value;
             $time2 = strtotime($time);
             $place = $wpdb->get_results("SELECT meta_value FROM $wpdb->postmeta WHERE post_id = $i->post_id and meta_key = 'event_place'")[0]->meta_value;
             $status = $wpdb->get_results("SELECT meta_value FROM $wpdb->postmeta WHERE post_id = $i->post_id and meta_key = 'status'")[0]->meta_value;
-            var_dump($time2);
             if($status=="Открыто для регистрации" && $time2>= $current_time){
                 $arr = ['post_id'=>$i->post_id, 
                 'name_value'=>$name, 
